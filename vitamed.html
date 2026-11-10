@@ -1,0 +1,1009 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VitaMed – Panel de Control</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #F9FFFB;
+      --surface: #FFFFFF;
+      --card-bg: #DFF7E8;
+      --line: #9BE7B1;
+      --pri: #2CB67D;
+      --pri-dark: #1F3D2C;
+      --text: #1F3D2C;
+      --sub: #2C543E;
+      --onpri: #FFFFFF;
+      --ok: #1F3D2C;
+      --okbg: #9BE7B1;
+      --warn: #7A4E00;
+      --warnbg: #FFF3D1;
+      --bad: #9B1111;
+      --badbg: #FFDADA;
+      --focus: #1F3D2C;
+      box-sizing: border-box;
+      font-size: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Atkinson Hyperlegible", Verdana, Arial, sans-serif;
+      line-height: 1.5;
+      font-size: 1rem;
+    }
+
+    :focus-visible {
+      outline: 4px solid var(--focus);
+      outline-offset: 4px;
+    }
+
+    .desktop-layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Navegación Lateral (el ancho crece junto con el tamaño de letra) */
+    aside {
+      width: 15rem;
+      min-width: 12rem;
+      max-width: 40vw;
+      background: var(--surface);
+      border-right: 3px solid var(--line);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      box-shadow: 4px 0 15px rgba(31, 61, 44, 0.05);
+    }
+
+    .brand {
+      background: var(--pri-dark);
+      color: var(--onpri);
+      padding: 1.5rem 1.2rem;
+      text-align: center;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+
+    nav {
+      padding: 1.5rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      flex-grow: 1;
+    }
+
+    nav button {
+      width: 100%;
+      min-height: 4.2rem;
+      font: inherit;
+      font-weight: 700;
+      font-size: 1.1rem;
+      line-height: 1.25;
+      border-radius: 0.8rem;
+      border: 3px solid var(--line);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      padding: 0.6rem 0.9rem;
+      text-align: left;
+      overflow-wrap: anywhere;
+    }
+
+    nav button span.i {
+      font-size: 1.7rem;
+      flex-shrink: 0;
+    }
+
+    nav button[aria-current="page"] {
+      background: var(--pri);
+      color: var(--onpri);
+      border-color: var(--pri-dark);
+    }
+
+    .content-area {
+      flex-grow: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      max-width: 1200px;
+    }
+
+    header {
+      background: var(--surface);
+      border-bottom: 3px solid var(--line);
+      padding: 1rem 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .tsz {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .tsz button {
+      min-width: 3.2rem;
+      min-height: 3.2rem;
+      font: inherit;
+      font-weight: 700;
+      border-radius: 0.6rem;
+      border: 3px solid var(--pri-dark);
+      background: var(--surface);
+      color: var(--pri-dark);
+      cursor: pointer;
+    }
+
+    .tsz button[aria-pressed="true"] {
+      background: var(--pri);
+      color: var(--onpri);
+      border-color: var(--pri-dark);
+    }
+
+    main {
+      padding: 2rem;
+      flex-grow: 1;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      margin: 0 0 0.5rem 0;
+      color: var(--pri-dark);
+    }
+
+    p.lead {
+      margin: 0 0 1.5rem 0;
+      color: var(--sub);
+      font-size: 1.15rem;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 3px solid var(--line);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 12px rgba(31, 61, 44, 0.04);
+    }
+
+    .card.soft {
+      background: var(--card-bg);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+      gap: 1.5rem;
+    }
+
+    .page-head {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      width: 100%;
+      min-height: 4.2rem;
+      padding: 0.8rem 1.2rem;
+      font: inherit;
+      font-size: 1.25rem;
+      font-weight: 700;
+      border-radius: 0.8rem;
+      border: 3px solid var(--pri-dark);
+      background: var(--pri);
+      color: var(--onpri);
+      cursor: pointer;
+    }
+
+    .btn.alt {
+      background: var(--surface);
+      color: var(--pri-dark);
+      border-color: var(--line);
+    }
+
+    .btn.danger {
+      background: var(--badbg);
+      color: var(--bad);
+      border-color: var(--bad);
+    }
+
+    .btn.taken-state {
+      background: var(--okbg);
+      border-color: var(--ok);
+      color: var(--ok);
+    }
+
+    .btn.add {
+      width: auto;
+      padding: 0 1.5rem;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.3rem 0.8rem;
+      border-radius: 2rem;
+      font-weight: 700;
+      font-size: 1rem;
+      border: 2px solid currentColor;
+    }
+
+    .chip.ok { color: var(--pri-dark); background: var(--okbg); }
+    .chip.wait { color: var(--warn); background: var(--warnbg); }
+    .chip.bad { color: var(--bad); background: var(--badbg); }
+
+    .prog {
+      height: 1.4rem;
+      border-radius: 1rem;
+      background: var(--card-bg);
+      border: 2px solid var(--line);
+      overflow: hidden;
+      margin: 0.8rem 0 0.4rem;
+    }
+
+    .prog i {
+      display: block;
+      height: 100%;
+      background: var(--pri);
+    }
+
+    .dose {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .dose-header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .dose-actions {
+      display: flex;
+      gap: 0.8rem;
+      margin-top: 1rem;
+    }
+
+    .dose .dose-actions {
+      margin-top: 0;
+    }
+
+    .sub {
+      color: var(--sub);
+      font-size: 1.05rem;
+    }
+
+    .seg {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.8rem;
+      margin: 1rem 0 1.5rem;
+    }
+
+    .seg button {
+      min-height: 4.5rem;
+      font: inherit;
+      font-weight: 700;
+      font-size: 1.1rem;
+      border-radius: 0.8rem;
+      border: 3px solid var(--line);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .seg button[aria-checked="true"] {
+      border-color: var(--pri-dark);
+      background: var(--pri);
+      color: var(--onpri);
+    }
+
+    .field {
+      margin-bottom: 1.2rem;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+
+    .field input,
+    .field textarea {
+      width: 100%;
+      padding: 0.8rem;
+      font: inherit;
+      border: 3px solid var(--line);
+      border-radius: 0.8rem;
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    .field textarea {
+      min-height: 6.5rem;
+      resize: vertical;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 5rem 1fr 5rem;
+      gap: 0.8rem;
+    }
+
+    .step button {
+      min-height: 4.5rem;
+      font: inherit;
+      font-size: 2.2rem;
+      font-weight: 700;
+      border-radius: 0.8rem;
+      border: 3px solid var(--pri-dark);
+      background: var(--surface);
+      color: var(--pri-dark);
+      cursor: pointer;
+    }
+
+    .step input {
+      width: 100%;
+      min-height: 4.5rem;
+      text-align: center;
+      font: inherit;
+      font-size: 2.2rem;
+      font-weight: 700;
+      border-radius: 0.8rem;
+      border: 3px solid var(--line);
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    .unit {
+      margin-top: 0.4rem;
+      color: var(--sub);
+      font-size: 1rem;
+    }
+
+    .appt {
+      border-left-width: 12px;
+    }
+
+    .appt.soon {
+      border-color: var(--warn);
+      border-left-color: var(--warn);
+    }
+
+    .prep {
+      display: flex;
+      gap: 0.8rem;
+      align-items: flex-start;
+      margin-top: 1rem;
+      padding: 1rem;
+      border-radius: 0.8rem;
+      background: var(--warnbg);
+      color: var(--warn);
+      font-weight: 700;
+    }
+
+    .prep.n {
+      background: var(--card-bg);
+      color: var(--text);
+      font-weight: 400;
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      background: rgba(31, 61, 44, 0.8);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      overflow-y: auto;
+    }
+
+    .overlay.on {
+      display: flex;
+    }
+
+    .modal-box {
+      background: var(--surface);
+      color: var(--text);
+      border: 4px solid var(--pri-dark);
+      border-radius: 1.5rem;
+      padding: 2.5rem;
+      max-width: 650px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      margin: auto;
+    }
+
+    .form-btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    .form-btns .btn {
+      flex: 1 1 12rem;
+    }
+
+    #toast {
+      position: fixed;
+      right: 2rem;
+      bottom: 2rem;
+      max-width: 500px;
+      z-index: 60;
+      background: var(--pri-dark);
+      color: var(--onpri);
+      padding: 1.2rem 1.5rem;
+      border-radius: 1rem;
+      font-weight: 700;
+      display: none;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    #toast.on {
+      display: flex;
+    }
+
+    #toast button {
+      font: inherit;
+      font-weight: 700;
+      min-height: 3rem;
+      padding: 0 1rem;
+      border-radius: 0.6rem;
+      border: 2px solid var(--onpri);
+      background: transparent;
+      color: var(--onpri);
+      cursor: pointer;
+    }
+
+    svg text {
+      fill: var(--text);
+      font-family: inherit;
+    }
+
+    /* Pantallas angostas: el menú pasa arriba en fila para que A++ no ocupe todo el ancho */
+    @media (max-width: 900px) {
+      .desktop-layout { flex-direction: column; }
+      aside {
+        width: 100%;
+        max-width: none;
+        height: auto;
+        position: static;
+        border-right: 0;
+        border-bottom: 3px solid var(--line);
+      }
+      nav { flex-direction: row; flex-wrap: wrap; padding: 1rem; }
+      nav button { flex: 1 1 12rem; }
+      main { padding: 1rem; }
+      header { padding: 1rem; }
+      .modal-box { padding: 1.5rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="desktop-layout">
+    <aside>
+      <div class="brand">
+        <h1>VitaMed</h1>
+      </div>
+      <nav aria-label="Menú principal">
+        <button data-t="hoy"><span class="i" aria-hidden="true">💊</span>Mis Medicinas</button>
+        <button data-t="signos"><span class="i" aria-hidden="true">❤️</span>Mi Salud</button>
+        <button data-t="citas"><span class="i" aria-hidden="true">📅</span>Mis Citas</button>
+      </nav>
+    </aside>
+
+    <div class="content-area">
+      <header>
+        <div>
+          <h2 style="margin:0">Bienvenido, Don Héctor</h2>
+        </div>
+        <div class="tsz" role="group" aria-label="Tamaño del texto">
+          <span style="font-weight:700; margin-right:0.5rem">Tamaño de letra:</span>
+          <button data-s="20" aria-label="Texto estándar (A)" aria-pressed="true">A</button>
+          <button data-s="24" aria-label="Texto grande (A+)" aria-pressed="false">A+</button>
+          <button data-s="28" aria-label="Texto muy grande (A++)" aria-pressed="false">A++</button>
+        </div>
+      </header>
+
+      <main id="view" tabindex="-1"></main>
+    </div>
+  </div>
+
+  <!-- Modal Alerta de Medicina -->
+  <div id="alert" class="overlay" role="alertdialog" aria-modal="true" aria-labelledby="al-t">
+    <div class="modal-box" style="text-align:center;">
+      <div style="font-size: 4rem;" aria-hidden="true">⏰</div>
+      <h2 id="al-t">Es hora de su medicina</h2>
+      <div id="al-n" style="font-size: 1.6rem; font-weight:700"></div>
+      <div id="al-d" class="sub" style="font-size: 1.2rem"></div>
+      <button class="btn" id="al-ok">✔ Ya la tomé</button>
+      <button class="btn alt" id="al-snz">Recordarme en 15 minutos</button>
+    </div>
+  </div>
+
+  <!-- Modal CRUD: Agregar / Editar Medicina -->
+  <div id="crud-modal" class="overlay" role="dialog" aria-modal="true" aria-labelledby="crud-title">
+    <div class="modal-box">
+      <h2 id="crud-title">Agregar Medicina</h2>
+      <form id="med-form" style="display:flex; flex-direction:column; gap:1rem;">
+        <input type="hidden" id="med-id">
+        <div class="field">
+          <label for="nm">Nombre del medicamento</label>
+          <input id="nm" type="text" placeholder="Ej. Losartán" required>
+          <small style="display: block; margin-top: 0.3rem; color: var(--sub); font-size: 0.95rem;">Escriba el nombre exacto como viene en la caja o receta médica.</small>
+
+        </div>
+        <div class="field">
+          <label for="ds">Dosis</label>
+          <input id="ds" type="text" placeholder="Ej. 1 tableta de 50 mg" required>
+          <small style="display: block; margin-top: 0.3rem; color: var(--sub); font-size: 0.95rem;">Indique la cantidad y la unidad.</small>
+
+        </div>
+        <div class="field">
+          <label for="tm">Hora del recordatorio</label>
+          <input id="tm" type="text" placeholder="Ej. 8:00 a. m." required>
+          <small style="display: block; margin-top: 0.3rem; color: var(--sub); font-size: 0.95rem;">Escriba la hora en que tomará la medicina.</small>
+
+        </div>
+        <div class="field">
+          <label for="fr">¿Para qué sirve?</label>
+          <input id="fr" type="text" placeholder="Ej. Para la presión" required>
+          <small style="display: block; margin-top: 0.3rem; color: var(--sub); font-size: 0.95rem;">Escriba la razón por la que toma este medicamento</small>
+
+        </div>
+        <div class="form-btns">
+          <button type="submit" class="btn" id="save-med-btn">💾 Guardar Medicina</button>
+          <button type="button" class="btn alt" id="cancel-med-btn">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal CRUD: Agregar / Editar Cita -->
+  <div id="appt-modal" class="overlay" role="dialog" aria-modal="true" aria-labelledby="appt-title">
+    <div class="modal-box">
+      <h2 id="appt-title">Agregar Cita</h2>
+      <form id="appt-form" style="display:flex; flex-direction:column; gap:1rem;">
+        <input type="hidden" id="ap-id">
+        <div class="field">
+          <label for="ap-t">Motivo de la cita</label>
+          <input id="ap-t" type="text" placeholder="Ej. Análisis de sangre" required>
+          <small style="display: block; margin-top: 0.3rem; color: var(--sub); font-size: 0.95rem;">Escriba el tipo de consulta o estudio.</small>
+
+        </div>
+        <div class="field">
+          <label for="ap-d">Día</label>
+          <input id="ap-d" type="date" required>
+          <small style="display: block; margin-top: 0.3rem; color: var(--sub); font-size: 0.95rem;">Seleccione en el calendario o escriba la fecha de su cita.</small>
+
+        </div>
+        <div class="field">
+          <label for="ap-h">Hora</label>
+          <input id="ap-h" type="time" required>
+          <small style="display: block; margin-top: 0.3rem; color: var(--sub); font-size: 0.95rem;">Indique la hora exacta de su cita.</small>
+
+        </div>
+        <div class="field">
+          <label for="ap-l">Lugar (opcional)</label>
+          <input id="ap-l" type="text" placeholder="Ej. Clínica Respira, consultorio 3">
+          <small style="display: block; margin-top: 0.3rem; color: var(--sub); font-size: 0.95rem;">Escriba el nombre del hospital, clínica o número de consultorio.</small>
+
+        </div>
+        <div class="field">
+          <label for="ap-p">¿Qué debo preparar? (opcional)</label>
+          <textarea id="ap-p" placeholder="Ej. Ir en ayunas"></textarea>
+          <small style="display: block; margin-top: 0.3rem; color: var(--sub); font-size: 0.95rem;">Anote las indicaciones previas</small>
+        </div>
+        <div class="form-btns">
+          <button type="submit" class="btn" id="save-appt-btn">💾 Guardar Cita</button>
+          <button type="button" class="btn alt" id="cancel-appt-btn">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" role="status" aria-live="polite">
+    <span id="toast-t"></span>
+    <button id="toast-u" hidden>Deshacer</button>
+  </div>
+
+  <script>
+    const $ = s => document.querySelector(s);
+    const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+    // --- Utilidades de fecha y hora ---
+    const pad = n => String(n).padStart(2, "0");
+    const isoD = d => d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+    const addDays = n => { const d = new Date(); d.setDate(d.getDate() + n); return d; };
+    const parseD = s => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
+    const dayDiff = s => { const b = new Date(); b.setHours(0, 0, 0, 0); return Math.round((parseD(s) - b) / 864e5); };
+    const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+    const fDate = s => cap(parseD(s).toLocaleDateString("es-MX", { weekday: "long", day: "numeric", month: "long" }));
+    const t12 = t => { const [h, m] = t.split(":").map(Number); return ((h % 12) || 12) + ":" + pad(m) + (h < 12 ? " a. m." : " p. m."); };
+
+    // --- Datos ---
+    let meds = [
+      { id: 1, n: "Losartán", d: "1 tableta de 50 mg", t: "8:00 a. m.", for: "Para la presión", taken: "8:04 a. m." },
+      { id: 2, n: "Metformina", d: "1 tableta de 850 mg", t: "8:00 a. m.", for: "Para el azúcar", taken: "8:04 a. m." },
+      { id: 3, n: "Salbutamol", d: "2 inhalaciones", t: "2:00 p. m.", for: "Para los pulmones", taken: null },
+      { id: 4, n: "Metformina", d: "1 tableta de 850 mg", t: "8:00 p. m.", for: "Para el azúcar", taken: null }
+    ];
+    const vit = {
+      pres: { name: "Presión arterial", icon: "🩺", unit: "mmHg", data: [[128, 82], [135, 85], [130, 80], [142, 90], [126, 78], [133, 84]] },
+      gluc: { name: "Glucosa", icon: "🩸", unit: "mg/dL", data: [110, 125, 138, 118, 105, 121] },
+      temp: { name: "Temperatura", icon: "🌡️", unit: "°C", data: [36.5, 36.6, 36.4, 36.7, 36.5] }
+    };
+    // Las citas guardan fecha (AAAA-MM-DD) y hora (HH:MM) para poder ordenarlas y calcular "Es mañana"
+    let citas = [
+      { id: 101, t: "Análisis de sangre", date: isoD(addDays(1)), time: "07:30", l: "Laboratorio Clínico Central", p: "En ayunas: no coma ni beba nada (solo agua) desde las 11:30 p. m. de hoy." },
+      { id: 102, t: "Consulta con Dr. Ramírez (neumología)", date: isoD(addDays(5)), time: "10:00", l: "Clínica Respira, consultorio 3", p: "Lleve su registro de presión y glucosa. Puede desayunar normal." },
+      { id: 103, t: "Revisión de oxígeno", date: isoD(addDays(14)), time: "09:30", l: "Clínica Respira, planta baja", p: "Lleve su equipo de oxígeno portátil." }
+    ];
+
+    let tab = "hoy", kind = "pres", form = { pres: [130, 85], gluc: [110], temp: [36.6] }, undo = null, tt;
+
+    let ac, beepI;
+    function beep() {
+      try {
+        ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+        const o = ac.createOscillator(), g = ac.createGain();
+        o.frequency.value = 880; g.gain.value = .25;
+        o.connect(g); g.connect(ac.destination);
+        o.start(); o.stop(ac.currentTime + .35);
+      } catch (e) { }
+    }
+    function startBeep() { beep(); beepI = setInterval(beep, 2000); }
+    function stopBeep() { clearInterval(beepI); }
+
+    function toast(msg, undoFn) {
+      $("#toast-t").textContent = msg; const u = $("#toast-u"); u.hidden = !undoFn; undo = undoFn || null;
+      $("#toast").classList.add("on"); clearTimeout(tt); tt = setTimeout(() => $("#toast").classList.remove("on"), undoFn ? 8000 : 4000);
+    }
+    $("#toast-u").onclick = () => { if (undo) undo(); $("#toast").classList.remove("on"); };
+
+    function nextPending() { return meds.find(m => !m.taken); }
+
+    function toggleTake(id) {
+      const m = meds.find(x => x.id === id); if (!m) return;
+      if (m.taken) {
+        m.taken = null;
+        toast("Se ha desmarcado " + m.n + ". Puedes volver a marcarla cuando la tomes.");
+      } else {
+        m.taken = "Ahora";
+        toast("Anotado: " + m.n + " tomada correctamente.", () => { m.taken = null; render(); });
+      }
+      render();
+    }
+
+    function openAlert() {
+      const m = nextPending(); if (!m) { toast("Ya tomó todas las medicinas de hoy. ¡Muy bien!"); return; }
+      $("#al-n").textContent = m.n + " · " + m.d; $("#al-d").textContent = m.for + " · " + m.t;
+      $("#alert").classList.add("on"); $("#al-ok").dataset.id = m.id; $("#al-ok").focus(); startBeep();
+    }
+    function closeAlert() { $("#alert").classList.remove("on"); stopBeep(); }
+    $("#al-ok").onclick = e => { const id = +e.currentTarget.dataset.id; closeAlert(); toggleTake(id); };
+    $("#al-snz").onclick = () => { closeAlert(); toast("Le avisaremos de nuevo en 15 minutos."); };
+
+    // --- Modal CRUD Medicinas ---
+    function openCrudModal(med = null) {
+      if (med) {
+        $("#crud-title").textContent = "Editar Medicamento";
+        $("#med-id").value = med.id;
+        $("#nm").value = med.n;
+        $("#ds").value = med.d;
+        $("#tm").value = med.t;
+        $("#fr").value = med.for;
+      } else {
+        $("#crud-title").textContent = "Agregar Medicina";
+        $("#med-id").value = "";
+        $("#med-form").reset();
+      }
+      $("#crud-modal").classList.add("on");
+      $("#nm").focus();
+    }
+    function closeCrudModal() { $("#crud-modal").classList.remove("on"); }
+    $("#cancel-med-btn").onclick = closeCrudModal;
+
+    $("#med-form").onsubmit = e => {
+      e.preventDefault();
+      const id = $("#med-id").value;
+      if (id) {
+        const m = meds.find(x => x.id === +id);
+        if (m) {
+          m.n = $("#nm").value;
+          m.d = $("#ds").value;
+          m.t = $("#tm").value;
+          m.for = $("#fr").value;
+          toast("Medicamento " + m.n + " actualizado.");
+        }
+      } else {
+        const newMed = {
+          id: Date.now(),
+          n: $("#nm").value,
+          d: $("#ds").value,
+          t: $("#tm").value,
+          for: $("#fr").value,
+          taken: null
+        };
+        meds.push(newMed);
+        toast("Nuevo medicamento " + newMed.n + " agregado.");
+      }
+      closeCrudModal();
+      render();
+    };
+
+    function deleteMed(id) {
+      const m = meds.find(x => x.id === id); if (!m) return;
+      const backup = [...meds];
+      meds = meds.filter(x => x.id !== id);
+      render();
+      toast("Medicamento " + m.n + " eliminado.", () => { meds = backup; render(); });
+    }
+
+    // --- Modal CRUD Citas ---
+    function openApptModal(c = null) {
+      if (c) {
+        $("#appt-title").textContent = "Editar Cita";
+        $("#ap-id").value = c.id;
+        $("#ap-t").value = c.t;
+        $("#ap-d").value = c.date;
+        $("#ap-h").value = c.time;
+        $("#ap-l").value = c.l;
+        $("#ap-p").value = c.p;
+      } else {
+        $("#appt-title").textContent = "Agregar Cita";
+        $("#ap-id").value = "";
+        $("#appt-form").reset();
+        $("#ap-d").value = isoD(addDays(1));
+        $("#ap-h").value = "09:00";
+      }
+      $("#appt-modal").classList.add("on");
+      $("#ap-t").focus();
+    }
+    function closeApptModal() { $("#appt-modal").classList.remove("on"); }
+    $("#cancel-appt-btn").onclick = closeApptModal;
+
+    $("#appt-form").onsubmit = e => {
+      e.preventDefault();
+      const id = $("#ap-id").value;
+      const data = {
+        t: $("#ap-t").value.trim(),
+        date: $("#ap-d").value,
+        time: $("#ap-h").value,
+        l: $("#ap-l").value.trim(),
+        p: $("#ap-p").value.trim()
+      };
+      if (id) {
+        const c = citas.find(x => x.id === +id);
+        if (c) { Object.assign(c, data); toast("Cita \"" + c.t + "\" actualizada."); }
+      } else {
+        citas.push({ id: Date.now(), ...data });
+        toast("Nueva cita \"" + data.t + "\" agregada.");
+      }
+      closeApptModal();
+      render();
+    };
+
+    function deleteAppt(id) {
+      const c = citas.find(x => x.id === id); if (!c) return;
+      const backup = [...citas];
+      citas = citas.filter(x => x.id !== id);
+      render();
+      toast("Cita \"" + c.t + "\" eliminada.", () => { citas = backup; render(); });
+    }
+
+    // --- Vistas ---
+    function vHoy() {
+      const done = meds.filter(m => m.taken).length, pct = (done / (meds.length || 1)) * 100, nx = nextPending();
+      return `
+      <div class="page-head">
+        <div>
+          <h2>Mis Medicamentos de Hoy</h2>
+          <p class="lead" style="margin:0">${fDate(isoD(new Date()))}</p>
+        </div>
+        <button class="btn add" id="open-add-btn">➕ Agregar Medicina</button>
+      </div>
+
+      <section class="card soft" aria-labelledby="pg">
+        <h3 id="pg" style="margin:0">Ha tomado ${done} de ${meds.length} medicinas</h3>
+        <div class="prog" role="progressbar" aria-valuenow="${done}" aria-valuemin="0" aria-valuemax="${meds.length}" aria-labelledby="pg"><i style="width:${pct}%"></i></div>
+      </section>
+
+      ${nx ? `<button class="btn alt" id="sim" style="margin-bottom: 1.5rem;">🔔 Probar aviso de alarma (${esc(nx.n)})</button>` : `<div class="card"><h3>✔ ¡Felicidades! Todas las medicinas tomadas por hoy</h3></div>`}
+
+      <h2>Lista de Horarios y Dosis</h2>
+      <div class="grid-2">
+      ${meds.length === 0 ? `<p class="lead">No tiene medicamentos registrados. Haga clic en <b>"➕ Agregar Medicina"</b> para agregar uno.</p>` : ""}
+      ${meds.map(m => `
+        <article class="card dose">
+          <div class="dose-header">
+            <h3 style="margin:0; font-size:1.4rem;">${esc(m.n)}</h3>
+            <span class="chip ${m.taken ? "ok" : "wait"}">${m.taken ? "✔ Tomada" : "⏰ Pendiente"}</span>
+          </div>
+          <div class="sub">Dosis: <b>${esc(m.d)}</b><br>Hora: <b>${esc(m.t)}</b><br>Indicación: ${esc(m.for)}${m.taken ? `<br><i>Tomada a las ${esc(m.taken)}</i>` : ""}</div>
+
+          <button class="btn ${m.taken ? "taken-state" : ""}" data-toggle-take="${m.id}">
+            ${m.taken ? "✔ Ya la tomó (Clic para cambiar)" : "Marcar como tomada"}
+          </button>
+
+          <div class="dose-actions">
+            <button class="btn alt" style="min-height:3rem; font-size:1rem;" data-edit="${m.id}">✏️ Editar</button>
+            <button class="btn danger" style="min-height:3rem; font-size:1rem;" data-del="${m.id}">🗑️ Eliminar</button>
+          </div>
+        </article>`).join("")}
+      </div>`;
+    }
+
+    function status(k, v) {
+      if (k === "pres") { const [s, d] = v; if (s >= 140 || d >= 90) return ["bad", "⚠ Presión Alta"]; if (s >= 130 || d >= 85) return ["wait", "⚠ Un poco alta"]; return ["ok", "✔ Normal"]; }
+      if (k === "gluc") { if (v > 180) return ["bad", "⚠ Glucosa Alta"]; if (v > 130) return ["wait", "⚠ Un poco alta"]; if (v < 70) return ["bad", "⚠ Glucosa Baja"]; return ["ok", "✔ En rango"]; }
+      if (v >= 38) return ["bad", "⚠ Fiebre"]; if (v > 37.5) return ["wait", "⚠ Un poco alta"]; return ["ok", "✔ Normal"];
+    }
+    function fmt(k, v) { return k === "pres" ? v[0] + "/" + v[1] : String(v); }
+
+    function chart(k) {
+      const D = vit[k].data, ys = D.map(v => k === "pres" ? v[0] : v), mn = Math.min(...ys), mx = Math.max(...ys), pad_ = (mx - mn || 1) * 0.3;
+      const lo = mn - pad_, hi = mx + pad_, W = 600, H = 200, x = i => 40 + i * (W - 80) / Math.max(D.length - 1, 1), y = v => H - 40 - (v - lo) / (hi - lo) * (H - 80);
+      const pts = ys.map((v, i) => x(i) + "," + y(v)).join(" ");
+      return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Gráfica de salud">
+        <polyline points="${pts}" fill="none" stroke="var(--pri)" stroke-width="4"/>
+        ${ys.map((v, i) => `<circle cx="${x(i)}" cy="${y(v)}" r="7" fill="var(--pri-dark)"/><text x="${x(i)}" y="${y(v) - 14}" text-anchor="middle" font-size="16" font-weight="700">${k === "pres" ? D[i][0] : v}</text>`).join("")}
+      </svg>`;
+    }
+
+    function vSignos() {
+      const v = vit[kind], f = form[kind], labs = kind === "pres" ? ["Sistólica (número de arriba)", "Diastólica (número de abajo)"] : [v.name];
+      const st = kind === "temp" ? 0.1 : 1;
+      return `<h2>Registro de Salud</h2><p class="lead">Seleccione su medición y ajuste los valores fácilmente.</p>
+      <div role="radiogroup" aria-label="Medición" class="seg">${Object.entries(vit).map(([k, o]) => `<button role="radio" aria-checked="${k === kind}" data-k="${k}">${o.icon} ${o.name}</button>`).join("")}</div>
+      <div class="grid-2">
+        <section class="card">
+          <h3>Anotar lectura actual</h3><br>
+          ${f.map((val, i) => `<div class="field"><label for="f${i}">${labs[i]}</label>
+          <div class="step"><button aria-label="Bajar" data-d="-${st}" data-i="${i}">−</button><input id="f${i}" inputmode="decimal" value="${val}" data-i="${i}"><button aria-label="Subir" data-d="${st}" data-i="${i}">+</button></div></div>`).join("")}
+          <div class="unit">Unidad: ${v.unit}</div><br>
+          <button class="btn" id="save">💾 Guardar medición</button>
+        </section>
+        <section class="card">
+          <h3>Historial gráfico</h3>
+          ${chart(kind)}
+          <p class="sub" style="margin-top:0.5rem">Evolución de sus registros guardados.</p>
+        </section>
+      </div>`;
+    }
+
+    function apptCard(c) {
+      const n = dayDiff(c.date), soon = n >= 0 && n <= 1;
+      const tag = n < 0 ? ["ok", "✔ Ya pasó"] : n === 0 ? ["wait", "⏰ Es hoy"] : n === 1 ? ["wait", "⏰ Es mañana"] : n <= 7 ? ["ok", "📅 En " + n + " días"] : ["ok", "📅 Próxima"];
+      return `
+        <article class="card appt ${soon ? "soon" : ""}">
+          <span class="chip ${tag[0]}">${tag[1]}</span>
+          <h3 style="margin-top:0.8rem">${esc(c.t)}</h3>
+          <div class="sub" style="font-size:1.1rem"><b>${esc(fDate(c.date))}</b> · ${t12(c.time)}${c.l ? `<br>📍 ${esc(c.l)}` : ""}</div>
+          ${c.p ? `<div class="prep ${soon ? "" : "n"}"><span aria-hidden="true">${/ayun/i.test(c.p) ? "🍽️" : "📝"}</span><span>${esc(c.p)}</span></div>` : ""}
+          <div class="dose-actions">
+            <button class="btn alt" style="min-height:3rem; font-size:1rem;" data-apt-edit="${c.id}">✏️ Editar</button>
+            <button class="btn danger" style="min-height:3rem; font-size:1rem;" data-apt-del="${c.id}">🗑️ Eliminar</button>
+          </div>
+        </article>`;
+    }
+
+    function vCitas() {
+      const L = citas.slice().sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
+      const up = L.filter(c => dayDiff(c.date) >= 0), past = L.filter(c => dayDiff(c.date) < 0);
+      return `
+      <div class="page-head">
+        <div>
+          <h2>Mis Citas Médicas</h2>
+          <p class="lead" style="margin:0">Indicaciones e información relevante previa a sus consultas.</p>
+        </div>
+        <button class="btn add" id="open-add-appt">➕ Agregar Cita</button>
+      </div>
+      ${up.length ? `<div class="grid-2">${up.map(apptCard).join("")}</div>` : `<div class="card"><h3>No tiene citas próximas</h3><p class="sub">Haga clic en <b>"➕ Agregar Cita"</b> para anotar una.</p></div>`}
+      ${past.length ? `<h2 style="margin-top:1rem">Citas pasadas</h2><div class="grid-2">${past.map(apptCard).join("")}</div>` : ""}`;
+    }
+
+    function render() {
+      const m = $("#view");
+      m.innerHTML = tab === "hoy" ? vHoy() : tab === "signos" ? vSignos() : vCitas();
+
+      document.querySelectorAll("nav button").forEach(b => b.setAttribute("aria-current", b.dataset.t === tab ? "page" : "false"));
+
+      const s = $("#sim"); if (s) s.onclick = openAlert;
+      const addBtn = $("#open-add-btn"); if (addBtn) addBtn.onclick = () => openCrudModal();
+
+      m.querySelectorAll("[data-toggle-take]").forEach(b => b.onclick = () => toggleTake(+b.dataset.toggleTake));
+      m.querySelectorAll("[data-edit]").forEach(b => b.onclick = () => {
+        const med = meds.find(x => x.id === +b.dataset.edit);
+        if (med) openCrudModal(med);
+      });
+      m.querySelectorAll("[data-del]").forEach(b => b.onclick = () => deleteMed(+b.dataset.del));
+
+      // Citas
+      const addAppt = $("#open-add-appt"); if (addAppt) addAppt.onclick = () => openApptModal();
+      m.querySelectorAll("[data-apt-edit]").forEach(b => b.onclick = () => {
+        const c = citas.find(x => x.id === +b.dataset.aptEdit);
+        if (c) openApptModal(c);
+      });
+      m.querySelectorAll("[data-apt-del]").forEach(b => b.onclick = () => deleteAppt(+b.dataset.aptDel));
+
+      m.querySelectorAll("[data-k]").forEach(b => b.onclick = () => { kind = b.dataset.k; render(); });
+
+      m.querySelectorAll(".step button").forEach(b => b.onclick = () => {
+        const i = +b.dataset.i, d = +b.dataset.d;
+        form[kind][i] = Math.round((+form[kind][i] + d) * 10) / 10;
+        render(); $("#f" + i).focus();
+      });
+
+      const sv = $("#save");
+      if (sv) sv.onclick = () => {
+        const val = kind === "pres" ? form.pres.slice() : form[kind][0];
+        vit[kind].data.push(val);
+        if (vit[kind].data.length > 7) vit[kind].data.shift();
+        render();
+        toast("Medición guardada correctamente.");
+      };
+    }
+
+    document.querySelectorAll("nav button").forEach(b => b.onclick = () => { tab = b.dataset.t; render(); window.scrollTo(0, 0); });
+    document.querySelectorAll(".tsz button").forEach(b => b.onclick = () => {
+      document.documentElement.style.fontSize = b.dataset.s + "px";
+      document.querySelectorAll(".tsz button").forEach(x => x.setAttribute("aria-pressed", x === b));
+    });
+    document.addEventListener("keydown", e => {
+      if (e.key !== "Escape") return;
+      if ($("#appt-modal").classList.contains("on")) closeApptModal();
+      else if ($("#crud-modal").classList.contains("on")) closeCrudModal();
+    });
+
+    render();
+  </script>
+</body>
+
+</html>
